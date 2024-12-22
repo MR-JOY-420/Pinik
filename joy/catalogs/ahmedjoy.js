@@ -115,7 +115,7 @@ try {
   return;
 }
 try {
-  for (const Keys in ryukoValue) global.joy[Keys] = joyValue[Keys];
+  for (const Keys in joyValue) global.joy[Keys] = joyValue[Keys];
 } catch (e) {
   return;
 }
