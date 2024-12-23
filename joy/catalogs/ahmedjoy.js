@@ -3,22 +3,17 @@ const { join, resolve } = require('path')
 const { execSync } = require('child_process');
 const axios = require('axios')
 const config = require("../../joy.json");
-const hshs = require("../../user-agent.json");
 const chalk = require("chalk");
 const listPackage = JSON.parse(readFileSync('../../package.json')).dependencies;
 const packages = JSON.parse(readFileSync('../../package.json'));
 const fs = require("fs");
-const login = require('hut-chat-api');
+const login = require('../system/login/index.js');
 const moment = require("moment-timezone");
 const logger = require("./joykhan.js");
 const gradient = require("gradient-string");
 const process = require("process");
 const listbuiltinModules = require("module").builtinModules;
 const cnslEvent = require("../configs/console.json");
-const fonts = require('./fonts.js');
-global.fonts = fonts;
-global.line = "━━━━━━━━━━━━━━━━━━";
-
 
 global.client = new Object({
   commands: new Map(),
@@ -30,30 +25,30 @@ global.client = new Object({
   handleReply: new Array(),
   mainPath: process.cwd(),
   configPath: new String(),
-  apijoyPath: new String(),
+  apiryukoPath: new String(),
   ryukoPath: new String(),
   premiumListsPath: new String(),
   approvedListsPath: new String(),
   getTime: function(option) {
     switch (option) {
       case "seconds":
-        return `${moment.tz("Asia/Manila").format("ss")}`;
+        return `${moment.tz("Asia/Dhaka").format("ss")}`;
       case "minutes":
-        return `${moment.tz("Asia/Manila").format("mm")}`;
+        return `${moment.tz("Asia/Dhaka").format("mm")}`;
       case "hours":
-        return `${moment.tz("Asia/Manila").format("HH")}`;
+        return `${moment.tz("Asia/Dhaka").format("HH")}`;
       case "date":
-        return `${moment.tz("Asia/Manila").format("DD")}`;
+        return `${moment.tz("Asia/Dhaka").format("DD")}`;
       case "month":
-        return `${moment.tz("Asia/Manila").format("MM")}`;
+        return `${moment.tz("Asia/Dhaka").format("MM")}`;
       case "year":
-        return `${moment.tz("Asia/Manila").format("YYYY")}`;
+        return `${moment.tz("Asia/Dhaka").format("YYYY")}`;
       case "fullHour":
-        return `${moment.tz("Asia/Manila").format("HH:mm:ss")}`;
+        return `${moment.tz("Asia/Dhaka").format("HH:mm:ss")}`;
       case "fullYear":
-        return `${moment.tz("Asia/Manila").format("DD/MM/YYYY")}`;
+        return `${moment.tz("Asia/Dhaka").format("DD/MM/YYYY")}`;
       case "fullTime":
-        return `${moment.tz("Asia/Manila").format("HH:mm:ss DD/MM/YYYY")}`;
+        return `${moment.tz("Asia/Dhaka").format("HH:mm:ss DD/MM/YYYY")}`;
     }
   },
   timeStart: Date.now()
@@ -74,8 +69,8 @@ global.utils = require("./joyahmed.js");
 global.loading = require("./joykhan.js");
 global.nodemodule = new Object();
 global.config = new Object();
-global.joy = new Object();
-global.apijoy = new Object();
+global.ryuko = new Object();
+global.apiryuko = new Object();
 global.premium = new Object();
 global.approved = new Object();
 global.configModule = new Object();
@@ -95,37 +90,37 @@ if (errorMessages.length > 0) {
   });
 }
 
-var apijoyValue;
+var apiryukoValue;
 try {
-  global.client.apijoyPath = join(global.client.mainPath, "../configs/api.json");
-  apijoyValue = require(global.client.apijoyPath);
+  global.client.apiryukoPath = join(global.client.mainPath, "../configs/api.json");
+  apiryukoValue = require(global.client.apiryukoPath);
 } catch (e) {
   return;
 }
 try {
-  for (const apiKeys in apijoyValue) global.apijoy[apiKeys] = apijoyValue[apiKeys];
+  for (const apiKeys in apiryukoValue) global.apiryuko[apiKeys] = apiryukoValue[apiKeys];
 } catch (e) {
   return;
 }
-var joyValue;
+var ryukoValue;
 try {
-  global.client.joyPath = join(global.client.mainPath, "../configs/joy.json");
-  joyValue = require(global.client.joyPath);
+  global.client.ryukoPath = join(global.client.mainPath, "../configs/joy.json");
+  ryukoValue = require(global.client.ryukoPath);
 } catch (e) {
   return;
 }
 try {
-  for (const Keys in joyValue) global.joy[Keys] = joyValue[Keys];
+  for (const Keys in ryukoValue) global.ryuko[Keys] = ryukoValue[Keys];
 } catch (e) {
   return;
 }
 var configValue;
 try {
-  global.client.configPath = join(global.client.mainPath, "../../joy.json");
+  global.client.configPath = join(global.client.mainPath, "../../Cyber.json");
   configValue = require(global.client.configPath);
-  logger.loader(`deploying ${chalk.blueBright('joy')} file`);
+  logger.loader(`deploying ${chalk.blueBright('CYBER')} file`);
 } catch (e) {
-  return logger.loader(`cant read ${chalk.blueBright('joy')} file`, "error");
+  return logger.loader(`cant read ${chalk.blueBright('CYBER')} file`, "error");
 }
 try {
   for (const key in configValue) global.config[key] = configValue[key];
@@ -183,7 +178,6 @@ for (const property in listPackage) {
     global.nodemodule[property] = require(property)
   } catch (e) { }
 }
-
 const langFile = (readFileSync(`${__dirname}/languages/${global.config.language || "en"}.lang`, {
   encoding: 'utf-8'
 })).split(/\r?\n|\r/);
@@ -223,7 +217,7 @@ try {
     logger.error(`please enter your bot prefix in ${chalk.blueBright('joy.json')} file`)
   }
   if (global.config.author != "𝗝𝗢𝗬-𝗔𝗛𝗠𝗘𝗗") {
-    logger.error(`detected : author was changed at ${chalk.blueBright(joy.json')}`);
+    logger.error(`detected : author was changed at ${chalk.blueBright('joy.json')}`);
     process.exit(0);
   }
   if (packages.author != "𝗝𝗢𝗬-𝗔𝗛𝗠𝗘𝗗") {
@@ -239,33 +233,33 @@ try {
 }
 
 try {
-  var appStateFile = resolve(join(global.client.mainPath, "../../appstate.json"));
-  var appState = ((process.env.REPL_OWNER || process.env.PROCESSOR_IDENTIFIER) && (fs.readFileSync(appStateFile, 'utf8'))[0] != "[" && joy.encryptSt) ? JSON.parse(global.utils.decryptState(fs.readFileSync(appStateFile, 'utf8'), (process.env.REPL_OWNER || process.env.PROCESSOR_IDENTIFIER))) : require(appStateFile);
-  logger.loader(`deployed ${chalk.blueBright('joystate')} file`)
+  var appStateFile = resolve(join(global.client.mainPath, "../../joystate.json"));
+  var appState = ((process.env.REPL_OWNER || process.env.PROCESSOR_IDENTIFIER) && (fs.readFileSync(appStateFile, 'utf8'))[0] != "[" && ryuko.encryptSt) ? JSON.parse(global.utils.decryptState(fs.readFileSync(appStateFile, 'utf8'), (process.env.REPL_OWNER || process.env.PROCESSOR_IDENTIFIER))) : require(appStateFile);
+  logger.loader(`deployed ${chalk.blueBright('Cyberstate')} file`)
 } catch (e) {
-  return logger.error(`can't read ${chalk.blueBright('appstate session')} file`)
+  return logger.error(`can't read ${chalk.blueBright('Cyberstate')} file`)
 }
 
 function onBot({ models: botModel }) {
   const loginData = {};
   loginData.appState = appState;
-  login(loginData, hshs, async (loginError, loginApiData) => {
+  login(loginData, async (loginError, loginApiData) => {
     if (loginError) {
         console.log(loginError)
         return process.exit(0)
       }
-    loginApiData.setOptions(global.joy.loginoptions);
+    loginApiData.setOptions(global.ryuko.loginoptions);
     const fbstate = loginApiData.getAppState();
     let d = loginApiData.getAppState();
     d = JSON.stringify(d, null, '\x09');
-    if ((process.env.REPL_OWNER || process.env.PROCESSOR_IDENTIFIER) && global.joy.encryptSt) {
+    if ((process.env.REPL_OWNER || process.env.PROCESSOR_IDENTIFIER) && global.ryuko.encryptSt) {
       d = await global.utils.encryptState(d, process.env.REPL_OWNER || process.env.PROCESSOR_IDENTIFIER);
       writeFileSync(appStateFile, d)
     } else {
       writeFileSync(appStateFile, d)
     }
     global.client.api = loginApiData
-    global.joy.version = config.version,
+    global.ryuko.version = config.version,
       (async () => {
         const commandsPath = `../../scripts/commands`;
         const listCommand = readdirSync(commandsPath).filter(command => command.endsWith('.js') && !command.includes('example') && !global.config.disabledcmds.includes(command));
@@ -278,7 +272,7 @@ function onBot({ models: botModel }) {
 
             if (!config?.category) {
               try {
-                throw new Error(`command - ${command} category is not in the correct format or empty`);
+                throw new Error(` • HEY JOY •  ${command} category is not in the correct format or empty`);
               } catch (error) {
                 console.log(chalk.red(error.message));
                 continue;
@@ -287,17 +281,17 @@ function onBot({ models: botModel }) {
             const configures = require(`../../joy.json`);
             if (configures.premium) {
               if (!config?.hasOwnProperty('premium')) {
-                console.log(`command -`, chalk.hex("#ff0000")(command) + ` does not have the "premium" property.`);
+                console.log(`• HEY JOY • `, chalk.hex("#ff0000")(command) + ` does not have the "premium" property.`);
                 continue;
               }
             }
             if (!config?.hasOwnProperty('prefix')) {
-              console.log(`command -`, chalk.hex("#ff0000")(command) + ` does not have the "prefix" property.`);
+              console.log(`• JOY• `, chalk.hex("#ff0000")(command) + ` does not have the "prefix" property.`);
               continue;
             }
 
             if (global.client.commands.has(config.name || '')) {
-              console.log(chalk.red(`command - ${chalk.hex("#FFFF00")(command)} module is already deployed.`));
+              console.log(chalk.red(`• HEY JOY •  ${chalk.hex("#FFFF00")(command)} module is already deployed.`));
               continue;
             }
             const { dependencies, envConfig } = config;
@@ -322,14 +316,14 @@ function onBot({ models: botModel }) {
             if (envConfig) {
               const moduleName = config.name;
               global.configModule[moduleName] = global.configModule[moduleName] || {};
-              global.joy[moduleName] = global.joy[moduleName] || {};
+              global.ryuko[moduleName] = global.ryuko[moduleName] || {};
               for (const envConfigKey in envConfig) {
-                global.configModule[moduleName][envConfigKey] = global.joy[moduleName][envConfigKey] ?? envConfig[envConfigKey];
-                global.joy[moduleName][envConfigKey] = global.joy[moduleName][envConfigKey] ?? envConfig[envConfigKey];
+                global.configModule[moduleName][envConfigKey] = global.ryuko[moduleName][envConfigKey] ?? envConfig[envConfigKey];
+                global.ryuko[moduleName][envConfigKey] = global.ryuko[moduleName][envConfigKey] ?? envConfig[envConfigKey];
               }
-              var joyPath = require('../configs/joy.json');
-              joyPath[moduleName] = envConfig;
-              writeFileSync(global.client.joyPath, JSON.stringify(joyPath, null, 4), 'utf-8');
+              var ryukoPath = require('../configs/joy.json');
+              ryukoPath[moduleName] = envConfig;
+              writeFileSync(global.client.ryukoPath, JSON.stringify(ryukoPath, null, 4), 'utf-8');
             }
 
 
@@ -368,7 +362,7 @@ function onBot({ models: botModel }) {
             const event = require(join(global.client.mainPath, '../../scripts/events', ev));
             const { config, onLoad, run } = event;
             if (!config || !config.name || !run) {
-              global.loading.err(`${chalk.hex('#ff7100')(``)} ${chalk.hex("#FFFF00")(ev)} module is not in the correct format. `, "event");
+              global.loading.err(`${chalk.hex('#ff7100')(``)} ${chalk.hex("#FFFF00")(ev)} module is not in the correct format. `, "• CYBER EVENT •");
               continue;
             }
 
@@ -381,7 +375,7 @@ function onBot({ models: botModel }) {
             }
 
             if (global.client.events.has(config.name)) {
-              global.loading.err(`${chalk.hex('#ff7100')(``)} ${chalk.hex("#FFFF00")(ev)} module is already deployed.`, "event");
+              global.loading.err(`${chalk.hex('#ff7100')(``)} ${chalk.hex("#FFFF00")(ev)} module is already deployed.`, "• CYBER EVENT •");
               continue;
             }
             if (config.dependencies) {
@@ -399,12 +393,12 @@ function onBot({ models: botModel }) {
             }
             if (config.envConfig) {
               const configModule = global.configModule[config.name] || (global.configModule[config.name] = {});
-              const configData = global.joy[config.name] || (global.joy[config.name] = {});
+              const configData = global.ryuko[config.name] || (global.ryuko[config.name] = {});
               for (const evt in config.envConfig) {
                 configModule[evt] = configData[evt] = config.envConfig[evt] || '';
               }
-              writeFileSync(global.client.joyPath, JSON.stringify({
-                ...require(global.client.joyPath),
+              writeFileSync(global.client.ryukoPath, JSON.stringify({
+                ...require(global.client.ryukoPath),
                 [config.name]: config.envConfig
               }, null, 2));
             }
@@ -414,7 +408,7 @@ function onBot({ models: botModel }) {
               await onLoad(eventData);
             }
             global.client.events.set(config.name, event);
-            global.loading(`${crayon(``)}successfully deployed ${chalk.blueBright(config.name)}`, "event");
+            global.loading(`${crayon(``)}successfully deployed ${chalk.blueBright(config.name)}`, "• JOY EVENT •");
           }
           catch (err) {
             global.loading.err(`${chalk.hex("#ff0000")('')}${chalk.blueBright(ev)} failed with error : ${err.message}` + `\n`, "event");
@@ -424,9 +418,9 @@ function onBot({ models: botModel }) {
 
         }
       })();
-    console.log(chalk.blue(`\n` + `DEPLOYING BOT DATA`));
-    global.loading(`${crayon(``)}deployed ${chalk.blueBright(`${global.client.commands.size}`)} commands and ${chalk.blueBright(`${global.client.events.size}`)} events`, "data");
-    global.loading(`${crayon(``)}deployed time : ${chalk.blueBright(((Date.now() - global.client.timeStart) / 1000).toFixed() + 's')}`, "data");
+    console.log(chalk.blue(`\n` + `• JOY CHAT BOT DATA •`));
+    global.loading(`${crayon(``)}deployed ${chalk.blueBright(`${global.client.commands.size}`)} commands and ${chalk.blueBright(`${global.client.events.size}`)} events`, "• JOY DATA •");
+    global.loading(`${crayon(``)}deployed time : ${chalk.blueBright(((Date.now() - global.client.timeStart) / 1000).toFixed() + 's')}`, "• JOY DATA •");
     const listenerData = {};
     listenerData.api = loginApiData;
     listenerData.models = botModel;
@@ -450,10 +444,10 @@ function onBot({ models: botModel }) {
     authentication.Sequelize = Sequelize;
     authentication.sequelize = sequelize;
     const models = require('../system/database/model.js')(authentication);
-    logger(`deployed ${chalk.blueBright('database')} system`, "joy");
-    logger(`deploying ${chalk.blueBright('login')} system`, "joy")
+    logger(`deployed ${chalk.blueBright('database')} system`, "• JOY DATABASE   •");
+    logger(`deploying ${chalk.blueBright('login')} system`, "• JOY LOGIN 	    •")
     const botData = {};
     botData.models = models;
     onBot(botData);
-  } catch (error) { logger(`can't deploy ${chalk.blueBright('database')} system`, "joy") }
+  } catch (error) { logger(`can't deploy ${chalk.blueBright('database')} system`, "•JOY FAILED    •") }
 })();
